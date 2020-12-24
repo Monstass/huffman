@@ -1,4 +1,4 @@
-#include <iostream>
+п»ї#include <iostream>
 #include <string>
 #include <queue>
 #include <fstream>
@@ -7,7 +7,7 @@
 #include <unordered_map>
 using namespace std;
 
-// Структура дерева
+// РЎС‚СЂСѓРєС‚СѓСЂР° РґРµСЂРµРІР°
 struct Node
 {
 	char ch;
@@ -15,7 +15,7 @@ struct Node
 	Node* left, * right;
 };
 
-// Создание новых ветвей
+// РЎРѕР·РґР°РЅРёРµ РЅРѕРІС‹С… РІРµС‚РІРµР№
 Node* getNode(char ch, int freq, Node* left, Node* right)
 {
 	Node* node = new Node();
@@ -28,17 +28,17 @@ Node* getNode(char ch, int freq, Node* left, Node* right)
 	return node;
 }
 
-// распределение объектов в дереве
+// СЂР°СЃРїСЂРµРґРµР»РµРЅРёРµ РѕР±СЉРµРєС‚РѕРІ РІ РґРµСЂРµРІРµ
 struct comp
 {
 	bool operator()(Node* l, Node* r)
 	{
-		// ниже вероятность - выше в дереве
+		// РЅРёР¶Рµ РІРµСЂРѕСЏС‚РЅРѕСЃС‚СЊ - РІС‹С€Рµ РІ РґРµСЂРµРІРµ
 		return l->freq > r->freq;
 	}
 };
 
-// проход по дереву и хранение данных в map
+// РїСЂРѕС…РѕРґ РїРѕ РґРµСЂРµРІСѓ Рё С…СЂР°РЅРµРЅРёРµ РґР°РЅРЅС‹С… РІ map
 void encode(Node* root, string str,
 	unordered_map<char, string>& huffmanCode)
 {
@@ -46,7 +46,7 @@ void encode(Node* root, string str,
 	if (root == nullptr)
 		return;
 
-	// нашли нужный лист
+	// РЅР°С€Р»Рё РЅСѓР¶РЅС‹Р№ Р»РёСЃС‚
 	if (!root->left && !root->right) 
 	{
 		huffmanCode[root->ch] = str;
@@ -56,7 +56,7 @@ void encode(Node* root, string str,
 	encode(root->right, str + "1", huffmanCode);
 }
 
-// проход по дереву, декодирвоание 
+// РїСЂРѕС…РѕРґ РїРѕ РґРµСЂРµРІСѓ, РґРµРєРѕРґРёСЂРІРѕР°РЅРёРµ 
 void decode(Node* root, int& index, string str, ofstream& out)
 {
 	if (root == nullptr) 
@@ -64,7 +64,7 @@ void decode(Node* root, int& index, string str, ofstream& out)
 		return;
 	}
 
-	// нашли лист
+	// РЅР°С€Р»Рё Р»РёСЃС‚
 	if (!root->left && !root->right)
 	{
 		cout << root->ch;
@@ -81,56 +81,56 @@ void decode(Node* root, int& index, string str, ofstream& out)
 		decode(root->right, index, str, out);
 }
 
-// построение дерева хаффмана
+// РїРѕСЃС‚СЂРѕРµРЅРёРµ РґРµСЂРµРІР° С…Р°С„С„РјР°РЅР°
 void buildHuffmanTree(string text)
 {
-	// подсчет количеста вероятнстей кажого символа
-	// хранение в map
+	// РїРѕРґСЃС‡РµС‚ РєРѕР»РёС‡РµСЃС‚Р° РІРµСЂРѕСЏС‚РЅСЃС‚РµР№ РєР°Р¶РѕРіРѕ СЃРёРјРІРѕР»Р°
+	// С…СЂР°РЅРµРЅРёРµ РІ map
 	unordered_map<char, int> freq;
 	for (char ch : text) 
 	{
 		freq[ch]++;
 	}
 
-	// Создание очереди узлов дерева
+	// РЎРѕР·РґР°РЅРёРµ РѕС‡РµСЂРµРґРё СѓР·Р»РѕРІ РґРµСЂРµРІР°
 	priority_queue<Node*, vector<Node*>, comp> pq;
 
-	// Создание узлов  для каждого символа и добавление
-	// в приоритетную очередь.
+	// РЎРѕР·РґР°РЅРёРµ СѓР·Р»РѕРІ  РґР»СЏ РєР°Р¶РґРѕРіРѕ СЃРёРјРІРѕР»Р° Рё РґРѕР±Р°РІР»РµРЅРёРµ
+	// РІ РїСЂРёРѕСЂРёС‚РµС‚РЅСѓСЋ РѕС‡РµСЂРµРґСЊ.
 	for (auto pair : freq) 
 	{
 		pq.push(getNode(pair.first, pair.second, nullptr, nullptr));
 	}
 
-	// пока в очереди будет более одного узла
+	// РїРѕРєР° РІ РѕС‡РµСЂРµРґРё Р±СѓРґРµС‚ Р±РѕР»РµРµ РѕРґРЅРѕРіРѕ СѓР·Р»Р°
 	while (pq.size() != 1)
 	{
 		Node* left = pq.top(); pq.pop();
 		Node* right = pq.top();	pq.pop();
 
 		
-		// Создаем новый внутренний узел с этими двумя узлами
-		// как потомков и с частотой равной сумме
-		// частот двух узлов. Добавиим новый узел
-		// в приоритетную очередь.
+		// РЎРѕР·РґР°РµРј РЅРѕРІС‹Р№ РІРЅСѓС‚СЂРµРЅРЅРёР№ СѓР·РµР» СЃ СЌС‚РёРјРё РґРІСѓРјСЏ СѓР·Р»Р°РјРё
+		// РєР°Рє РїРѕС‚РѕРјРєРѕРІ Рё СЃ С‡Р°СЃС‚РѕС‚РѕР№ СЂР°РІРЅРѕР№ СЃСѓРјРјРµ
+		// С‡Р°СЃС‚РѕС‚ РґРІСѓС… СѓР·Р»РѕРІ. Р”РѕР±Р°РІРёРёРј РЅРѕРІС‹Р№ СѓР·РµР»
+		// РІ РїСЂРёРѕСЂРёС‚РµС‚РЅСѓСЋ РѕС‡РµСЂРµРґСЊ.
 		int sum = left->freq + right->freq;
 		pq.push(getNode('\0', sum, left, right));
 	}
 
-	// root хранит указатель на корень дерева Хаффмана
+	// root С…СЂР°РЅРёС‚ СѓРєР°Р·Р°С‚РµР»СЊ РЅР° РєРѕСЂРµРЅСЊ РґРµСЂРµРІР° РҐР°С„С„РјР°РЅР°
 	Node* root = pq.top();
 
-	//проход по дереву, сохранение в map 
+	//РїСЂРѕС…РѕРґ РїРѕ РґРµСЂРµРІСѓ, СЃРѕС…СЂР°РЅРµРЅРёРµ РІ map 
 	unordered_map<char, string> huffmanCode;
 	encode(root, "", huffmanCode);
 
-	cout << "Коды:\n" << '\n';
+	cout << "РљРѕРґС‹:\n" << '\n';
 	for (auto pair : huffmanCode) 
 	{
 		cout << pair.first << " " << pair.second << '\n';
 	}
 
-	cout << "\nИзначальная строка:\n" << text << '\n';
+	cout << "\nРР·РЅР°С‡Р°Р»СЊРЅР°СЏ СЃС‚СЂРѕРєР°:\n" << text << '\n';
 
 	ofstream encode_file("encoded.txt", ios::binary);
 	string str = "";
@@ -170,9 +170,9 @@ void buildHuffmanTree(string text)
 		bitset<8> x(buffer);
 	}
 
-	cout << "\nЗакодированная строка:\n" << str << '\n';
+	cout << "\nР—Р°РєРѕРґРёСЂРѕРІР°РЅРЅР°СЏ СЃС‚СЂРѕРєР°:\n" << str << '\n';
 	int index = -1;
-	cout << "\nДекодированная строка: \n";
+	cout << "\nР”РµРєРѕРґРёСЂРѕРІР°РЅРЅР°СЏ СЃС‚СЂРѕРєР°: \n";
 	ofstream out("decoded.txt");
 	while (index < (int)str.size() - 1) 
 	{
